@@ -1,0 +1,76 @@
+.App-intro {
+    font-size: large;
+  }
+  .listar-pregunta{
+    border: 1.6px rgb(218, 218, 218) solid;
+    margin-top: 0.5em;
+    padding: 0.2em;
+    border-radius: 1em;
+    border-image-repeat: stretch stretch;
+    border-image-slice: 100%;
+    border-spacing: 15px 15px;
+    cursor:pointer;
+    list-style-type: none;
+  }
+  .radio{
+    font-size: 19px;
+  }
+  #saltar{
+    background-color: transparent;
+    border: 1.6px #bfbfbf solid;
+    border-radius: 1em;
+    font-size: 19px;
+    color: cadetblue;
+  }
+  #saltar:hover{
+    border-color: #3d3939;
+    background-color: #bfbfbf;
+    color: #706969
+  }
+  .listar-pregunta:hover{
+      background-color:rgba(133, 121, 121, 0.397);
+      border-color: rgba(68, 65, 65, 0.397);
+  }
+  .button-principal{
+    border-radius: 1em;
+  }
+  .card-justificar{
+    text-align:justify;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .respuesta{
+    text-align: justify; 
+  }
+  .area-respuesta-true{
+    background-color: #65ab00;
+  }
+  .area-respuesta-false{
+    background-color:#e70800;
+  }
+  .ayuda-pregunta{
+    background-color: darksalmon;
+    border: 1px solid black;
+    margin-top: 5%;
+  }
+  .ayuda-respuesta{
+    border: 1px solid black;
+  }
+  .ayuda-columna{
+    text-align: justify;
+  }
+  .ayuda-contenedor{
+    margin-bottom: 5%;
+    margin-top: 1%;
+  }
+  .perfil-contenedor{
+    
+  }
+  
+
+  @media only screen and (min-width: 768px) {
+  .registrar-section{
+    border:1px solid #d8d8d8;
+    padding: 3em 1em 2em;
+  }
+}
