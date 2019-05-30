@@ -1,10 +1,10 @@
-const url = "http://cachimbogo.xyz/";
-const url2 = "https://cachimbogo.herokuapp.com/servicios";
+const url = "https://cachimbogo-flask.herokuapp.com";
+
 export default function PostData(dir, data,flag) {
     let urlTemp;
     return new Promise((resolve, reject) => {
         if(flag){
-            urlTemp=url2;
+            urlTemp=url;
         }else{
             urlTemp=url;
         }

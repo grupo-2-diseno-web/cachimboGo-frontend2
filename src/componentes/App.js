@@ -46,10 +46,10 @@ class App extends Component {
          */
     handleLogin(user, contra) {
             const datos = {
-                usuario: user,
+                username: user,
                 password: contra
             }
-            PostData("usuarioAuth/", datos, true).then((result) => {
+            PostData("login", datos, true).then((result) => {
                 if (result.usuario) {
                     sessionStorage.setItem('user', JSON.stringify(result));
                     this.setState({
@@ -95,7 +95,7 @@ class App extends Component {
         //https://github.com/trendmicro-frontend/react-sidenav
         const { children } = this.props;
         //comentario 2
-        if (/*this.state.login*/true) {
+        if (this.state.login) {
                 return (
                     <div id = "page-top" >
                     <div id="wrapper2">

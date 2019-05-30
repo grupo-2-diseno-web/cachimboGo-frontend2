@@ -21,14 +21,14 @@ class Asignaturas extends Component {
          * el usuario
          */
     componentDidMount() {
-        const dir = 'usuario_asignatura.php';
-        //const data=`?id_usuario=${this.state.usuario.id_usuario}`;
-        const data = `?id_usuario=15200197`;
+        const dir = 'usuarioAsignatura';
+        const data=`?id_usuario=${this.state.usuario.id_usuario}`;
+       
 
         GetData(dir, data).then((result) => {
-            //  console.log(result);
+            console.log(result);
             this.setState({
-                asignaturas: result
+                asignaturas: result.data
             })
         })
     }
@@ -38,11 +38,11 @@ class Asignaturas extends Component {
      */
     handleGetTemas(props) {
         //console.log(props);
-        const dir = 'tema-asignatura';
+        const dir = 'temaAsignatura/';
         const data = props;
         GetData(dir, data, true).then((result) => {
             this.setState({
-                temas: result,
+                temas: result.data,
                 id_asignatura: props,
                 open: !this.state.open
             })

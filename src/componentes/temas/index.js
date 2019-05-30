@@ -56,11 +56,11 @@ class Temas extends Component {
             id_asignatura:props,
             id_usuario:55
         }*/
-        const dir = 'subtema-tema';
+        const dir = 'subtemaTema/';
         const data = props;
         GetData(dir, data, true).then((result) => {
             this.setState({
-                subtemas: result,
+                subtemas: result.data,
                 id_tema: props,
                 open: !this.state.open
             })
@@ -72,11 +72,11 @@ class Temas extends Component {
      */
     handleGetPreguntas(props) {
         console.log("esta abriendo el modal ..." + props);
-        const dir = 'preguntaR';
+        const dir = 'pregunta/';
         const data = `${props}/1`;
         GetData(dir, data, true).then((result) => {
             this.setState({
-                pregunta: result,
+                pregunta: result.data,
                 modal: !this.state.modal,
                 rpta: 0,
                 respuesta: "",
