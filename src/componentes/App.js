@@ -72,7 +72,7 @@ class App extends Component {
          */
     handleRegistrar(props, estado) {
             console.log(props);
-            PostData('usuario/', props).then((result) => {
+            PostData('usuario', props).then((result) => {
                 if (result) {
                     alert('Usuario registrado con exito');
                     estado();
