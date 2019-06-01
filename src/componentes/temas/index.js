@@ -5,6 +5,7 @@ import GetData from '../../servicios/getData';
 import PostData from '../../servicios/PostData';
 import { Row, Col } from 'reactstrap';
 import Modal from '../preguntas/modal';
+import {Button} from 'reactstrap';
 
 
 class Temas extends Component {
@@ -33,6 +34,7 @@ class Temas extends Component {
         this.handleCalificar = this.handleCalificar.bind(this);
         this.handleGetPreguntas = this.handleGetPreguntas.bind(this);
         this.handleSaltar = this.handleSaltar.bind(this);
+        this.cerrar = this.cerrar.bind(this);
     }
     componentWillMount() {
         this.setState({
@@ -178,7 +180,12 @@ class Temas extends Component {
 
     }
     //#########################
-
+    cerrar(){
+        this.setState({
+            open: !this.state.open
+        })
+        
+    }
     //pasar a la siguiente pregunta
     handleNext() {
         let preguntas = this.state.pregunta;
@@ -279,6 +286,7 @@ class Temas extends Component {
         if (this.state.open) {
             return (
                 <Row>
+                    <Button color="success" className="btn margen-boton btn-lg btn-circle btn-danger" onClick={()=>{this.props.cerrar()}}><i class="fas fa-arrow-left"></i></Button>
                     {
                         temas && temas.map((valor, key) =>
                             <Col className="col col-md-11 my-5 mx-5" key={key}><Tema data={valor} getSubtemas={this.handleGetSubTemas} /></Col>
@@ -288,7 +296,13 @@ class Temas extends Component {
             )
         } else {
             return (
+                <div>
+                <div>
+                    <Button color="success" className="btn margen-boton btn-lg btn-circle btn-danger" onClick={()=>{this.cerrar()}}><i class="fas fa-arrow-left"></i></Button>
+                </div>
                 <Row>
+                    
+
                     {
                         this.state.subtemas && this.state.subtemas.map((valor, key) =>
                             <Col sm='4' className="col my-5 mx-5" key={key}><SubTema data={valor} getPreguntas={this.handleGetPreguntas} /></Col>
@@ -298,6 +312,7 @@ class Temas extends Component {
                         pregunta={this.state.pregunta[0]} responder={this.handleresponder} saltar={this.handleSaltar} respuesta={this.state.respuesta} correcta={this.state.correcta}
                         mensaje={this.state.msj} next={this.handleNext} />
                 </Row>
+                </div>
             )
         }
 

@@ -15,6 +15,7 @@ class Asignaturas extends Component {
                 usuario: JSON.parse(sessionStorage.getItem('user'))
             }
             this.handleGetTemas = this.handleGetTemas.bind(this);
+            this.cerrar=this.cerrar.bind(this);
         }
         /**
          * Carga las asignaturas en las que esta matriculado 
@@ -33,6 +34,11 @@ class Asignaturas extends Component {
         })
     }
 
+    cerrar(){
+        this.setState({
+            open: !this.state.open
+        })
+    }
     /**
      * funcion para obtener los temas por asignatura  
      */
@@ -69,7 +75,8 @@ class Asignaturas extends Component {
             )
         } else {
             return ( <Row >
-                <Temas temas = { this.state.temas }
+                
+                <Temas temas = { this.state.temas }  cerrar={this.cerrar}
                 /> </Row>
             )
         }
