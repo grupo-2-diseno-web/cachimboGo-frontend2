@@ -10,7 +10,8 @@ class ModalPreguntas extends Component {
       estado:false,
       nombreClase:'',
       radio:false,
-      radioIn:false
+      radioIn:false,
+      selectionOption:''
     }
   }
   componentWillMount(){
@@ -48,11 +49,11 @@ class ModalPreguntas extends Component {
             </div>
             <div>
                 <ul>
-                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio}  onChange={()=>{this.props.responder(1);this.setState({estado:true})}} name='clave' className='radio'/> {pregunta.clave1}</Label></li>
-                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio}  onChange={()=>{this.props.responder(2);this.setState({estado:true})}} name='clave' className='radio'/> {pregunta.clave2}</Label></li>
-                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio}  onChange={()=>{this.props.responder(3);this.setState({estado:true})}} name='clave' className='radio'/> {pregunta.clave3}</Label></li>
-                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio}  onChange={()=>{this.props.responder(4);this.setState({estado:true})}} name='clave' className='radio'/> {pregunta.clave4}</Label></li>
-                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio}  onChange={()=>{this.props.responder(5);this.setState({estado:true})}} name='clave' className='radio'/> {pregunta.clave5}</Label></li>
+                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio} checked={this.state.selectionOption === 1} onChange={()=>{this.props.responder(1);this.setState({estado:true,selectionOption:1})}} name='clave' className='radio'/> {pregunta.clave1}</Label></li>
+                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio} checked={this.state.selectionOption === 2} onChange={()=>{this.props.responder(2);this.setState({estado:true,selectionOption:2})}} name='clave' className='radio'/> {pregunta.clave2}</Label></li>
+                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio} checked={this.state.selectionOption === 3} onChange={()=>{this.props.responder(3);this.setState({estado:true,selectionOption:3})}} name='clave' className='radio'/> {pregunta.clave3}</Label></li>
+                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio} checked={this.state.selectionOption === 4} onChange={()=>{this.props.responder(4);this.setState({estado:true,selectionOption:4})}} name='clave' className='radio'/> {pregunta.clave4}</Label></li>
+                  <li className="listar-pregunta"><Label><input type="radio" disabled={this.state.radio} checked={this.state.selectionOption === 5} onChange={()=>{this.props.responder(5);this.setState({estado:true,selectionOption:5})}} name='clave' className='radio'/> {pregunta.clave5}</Label></li>
                 </ul>
             </div>
 
@@ -71,7 +72,7 @@ class ModalPreguntas extends Component {
                     {(this.state.estado)?(<Button color="primary" className="button-principal" onClick={()=>{this.props.calificar();this.setState({radio:!this.state.radio})}}>Calificar</Button>):(null)}
                   </Col>
                   <Col>
-                    {(this.props.correcta || this.props.mensaje)?(<Button color="primary" className="button-principal" onClick={()=>{this.props.next();this.setState({radio:!this.state.radio})}}>Siguiente</Button>):(null)}
+                    {(this.props.correcta || this.props.mensaje)?(<Button color="primary" className="button-principal" onClick={()=>{this.props.next();this.setState({radio:!this.state.radio,selectionOption:''})}}>Siguiente</Button>):(null)}
                   </Col>
                 </Row>
             </Container>
