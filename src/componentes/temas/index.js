@@ -87,6 +87,8 @@ class Temas extends Component {
                 msj: null,
                 idSubtema: props
             })
+        }).catch( e => {
+            throw new Error(e);
         })
         /* fetch(`https://cachimbogo.herokuapp.com/servicios/preguntaR/${props}/1`)
              .then(response => {
@@ -308,9 +310,10 @@ class Temas extends Component {
                             <Col sm='4' className="col my-5 mx-5" key={key}><SubTema data={valor} getPreguntas={this.handleGetPreguntas} /></Col>
                         )
                     }
-                    <Modal titulo="Gestion de preguntas" modal={this.state.modal} calificar={this.handleCalificar} toggle={this.toggle}
-                        pregunta={this.state.pregunta[0]} responder={this.handleresponder} saltar={this.handleSaltar} respuesta={this.state.respuesta} correcta={this.state.correcta}
-                        mensaje={this.state.msj} next={this.handleNext} />
+                    { typeof this.state.pregunta !== 'undefined'  ? 
+                        <Modal titulo="Gestion de preguntas" modal={this.state.modal} calificar={this.handleCalificar} toggle={this.toggle}
+                            pregunta={this.state.pregunta[0]} responder={this.handleresponder} saltar={this.handleSaltar} respuesta={this.state.respuesta} correcta={this.state.correcta}
+                            mensaje={this.state.msj} next={this.handleNext} /> : null}
                 </Row>
                 </div>
             )
