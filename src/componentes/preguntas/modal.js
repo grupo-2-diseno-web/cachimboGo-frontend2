@@ -69,7 +69,7 @@ class ModalPreguntas extends Component {
                     <Button id="saltar" onClick={this.props.saltar}>Saltar</Button>{' '}
                   </Col>
                   <Col>
-                    {(this.state.estado)?(<Button color="primary" className="button-principal" onClick={()=>{this.props.calificar();this.setState({radio:!this.state.radio})}}>Calificar</Button>):(null)}
+                    {(this.state.estado)?(<Button color="primary" className="button-principal" onClick={()=>{this.props.calificar(pregunta);this.setState({radio:!this.state.radio})}}>Calificar</Button>):(null)}
                   </Col>
                   <Col>
                     {(this.props.correcta || this.props.mensaje)?(<Button color="primary" className="button-principal" onClick={()=>{this.props.next();this.setState({radio:!this.state.radio,selectionOption:''})}}>Siguiente</Button>):(null)}

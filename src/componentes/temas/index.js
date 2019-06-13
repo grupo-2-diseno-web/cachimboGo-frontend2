@@ -52,6 +52,7 @@ class Temas extends Component {
             msj: "La respuesta correcta es:"
         })
     }
+
     handleGetSubTemas(props) {
       //  console.log('abrir subtemas');
         /*const datos={
@@ -117,47 +118,71 @@ class Temas extends Component {
      * funcion para validar si la respuesta pulsada por
      * el usuario fue correcta o no
      */
-    handleCalificar() {
-        let preguntas = this.state.pregunta;
+    handleCalificar(pregunta) {
+        const preguntas = this.state.pregunta;
         let respuesta = {};
+        //["id_usuario", "id_pregunta", "correcta_num", "monedas"]
 
-        if (this.state.rpta === preguntas[0].correcta_num) {
+        const currentPregunta = pregunta;
+        const currentRpta = this.state.rpta;
+        const id_usuario = this.state.usuario.id_usuario;
 
-            if (this.state.respuestas.find(pregunta => pregunta.id_pregunta === preguntas[0].id_pregunta)) {
-                this.setState({
-                    respuesta: preguntas[0].informacion,
-                    correcta: true,
-                    msj: "Tu respuesta es Correcta"
-                })
-            } else {
+        const bodyRequest= {
+          id_pregunta : currentPregunta.id_pregunta,
+          correcta_num: currentRpta,
+          id_usuario: id_usuario
+        }
+
+        PostData('respuesta',bodyRequest)
+        .then(response => {
+            const {correcta,informacion} = response;
+
+            if (this.state.rpta === preguntas[0].correcta_num) {
+
+              if (this.state.respuestas.find(pregunta => pregunta.id_pregunta === preguntas[0].id_pregunta)) {
+                  this.setState({
+                    respuesta:informacion,
+                    correcta: correcta,
+                    msj: 'Tu Respuesta es Correcta'
+                  })
+              } else {
                 respuesta = new this.crearObj(this.state.usuario.id_usuario, preguntas[0].id_pregunta, 1);//falta id 
                 this.setState({
-                    respuesta: preguntas[0].informacion,
+                    respuesta: informacion,
                     respuestas: this.state.respuestas.concat(respuesta),
-                    correcta: true,
-                    msj: "Tu respuesta es Correcta"
+                    correcta: response.correcta,
+                    msj:'Tu Respuesta es Correcta'
                 })
             }
         } else {
             if (this.state.respuestas.find(pregunta => pregunta.id_pregunta === preguntas[0].id_pregunta)) {
                 this.setState({
-                    respuesta: preguntas[0].informacion,
-                    correcta: false,
+                    respuesta: informacion,
+                    correcta: correcta,
                     errorPregunta: true,
                     msj: "Tu respuesta es Incorrecta"
                 })
             } else {
                 respuesta = new this.crearObj(this.state.usuario.id_usuario, preguntas[0].id_pregunta, 0);
                 this.setState({
-                    respuesta: preguntas[0].informacion,
+                    respuesta: informacion,
                     respuestas: this.state.respuestas.concat(respuesta),
-                    correcta: false,
+                    correcta: correcta,
                     errorPregunta: true,
                     msj: "Tu respuesta es Incorrecta"
                 })
             }
 
         }
+          
+        }).catch( e => {
+          throw new Error(e);
+      })
+
+    }
+
+    getRptaFromPregunta(idPregunta){
+      return this.state.respuestas.find(pregunta => pregunta.id_pregunta === idPregunta);
     }
     //codigo para leer el radio button presionado
     handleresponder(props) {
@@ -202,7 +227,7 @@ class Temas extends Component {
                 })
             } else {
                 let pre = preguntas.shift();
-                preguntas.push(pre);
+                // preguntas.push(pre);
                 this.setState({
                     pregunta: preguntas,
                     respuesta: "",
@@ -253,9 +278,9 @@ class Temas extends Component {
                 id_usuario:this.state.usuario.id_usuario,
                 monedas:arreglo.monedas
             }
-            PostData(dir,data,true).then((result)=>{
-                //console.log(result);
-            })
+            // PostData(dir,data,true).then((result)=>{
+            //     //console.log(result);
+            // })
 
             /**
              * Se almacena todas las repuestas que respondió
@@ -263,9 +288,9 @@ class Temas extends Component {
              */
             dir = 'respuesta/';
             data = this.state.respuestas;
-            PostData(dir, data, true).then((result) => {
-               // console.log(result);
-            })
+            // PostData(dir, data, true).then((result) => {
+            //    // console.log(result);
+            // })
 
             /**
              * Se registrar en la base de datos que 
@@ -273,9 +298,9 @@ class Temas extends Component {
              */
             dir = 'insertar_usuario_subtema.php';
             data = `?id_usuario=${this.state.usuario.id_usuario}&id_subtema=${this.state.idSubtema}&completado=${arregloEstadistica.completado}`;
-            GetData(dir, data).then((result) => {
-                //console.log(result);
-            })
+            // GetData(dir, data).then((result) => {
+            //     //console.log(result);
+            // })
             this.setState({
                 modal: !this.state.modal,
                 tipoModal: !this.state.tipoModal
@@ -303,10 +328,7 @@ class Temas extends Component {
                     <Button color="success" className="btn margen-boton btn-lg btn-circle btn-danger" onClick={()=>{this.cerrar()}}><i class="fas fa-arrow-left"></i></Button>
                 </div>
                 <Row>
-                    
-
-                    {
-                        this.state.subtemas && this.state.subtemas.map((valor, key) =>
+                    {this.state.subtemas && this.state.subtemas.map((valor, key) =>
                             <Col sm='4' className="col my-5 mx-5" key={key}><SubTema data={valor} getPreguntas={this.handleGetPreguntas} /></Col>
                         )
                     }
