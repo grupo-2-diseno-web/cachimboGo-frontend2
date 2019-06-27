@@ -44,15 +44,18 @@ class Asignaturas extends Component {
      */
     handleGetTemas(props) {
         //console.log(props);
-        const dir = 'temaAsignatura/';
-        const data = props;
+        const dir = 'temaAsignatura';
+        const data=`?id_usuario=${this.state.usuario.id_usuario}&id_asignatura=${props}`;
+
         GetData(dir, data, true).then((result) => {
+            console.log(result.data);
             this.setState({
                 temas: result.data,
                 id_asignatura: props,
                 open: !this.state.open
             })
         })
+        
     }
 
     render() {

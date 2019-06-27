@@ -25,7 +25,9 @@ class Temas extends Component {
             respuesta: "",         //se almacena la infomacion de la pregunta (explicacion de la pregunta)
             msj: null,             // mensjae que se envia al modal "Respuesta correcta o incorrecta"
             respuestas: [],        //se almacena las respuesta de cada pregunta para guardarlas al final del analisis 
-            errorPregunta: false   // flag para saber si respondió correctamente o se equivocó
+            errorPregunta: false,   // flag para saber si respondió correctamente o se equivocó
+            errores:0               //para saber si tuvo error en un subtema
+
         }
         this.handleGetSubTemas = this.handleGetSubTemas.bind(this);
         this.toggle = this.toggle.bind(this);
@@ -62,6 +64,7 @@ class Temas extends Component {
         const dir = 'subtemaTema/';
         const data = props;
         GetData(dir, data, true).then((result) => {
+            console.log(result.data);
             this.setState({
                 subtemas: result.data,
                 id_tema: props,
@@ -78,6 +81,7 @@ class Temas extends Component {
         const dir = 'pregunta/';
         const data = `${props}/1`;
         GetData(dir, data, true).then((result) => {
+            console.log(result.data);
             this.setState({
                 pregunta: result.data,
                 modal: !this.state.modal,
@@ -160,7 +164,8 @@ class Temas extends Component {
                     respuesta: informacion,
                     correcta: correcta,
                     errorPregunta: true,
-                    msj: "Tu respuesta es Incorrecta"
+                    msj: "Tu respuesta es Incorrecta",
+                    errores: this.state.errores+1
                 })
             } else {
                 respuesta = new this.crearObj(this.state.usuario.id_usuario, preguntas[0].id_pregunta, 0);
@@ -169,7 +174,8 @@ class Temas extends Component {
                     respuestas: this.state.respuestas.concat(respuesta),
                     correcta: correcta,
                     errorPregunta: true,
-                    msj: "Tu respuesta es Incorrecta"
+                    msj: "Tu respuesta es Incorrecta",
+                    errores:this.state.errores+1
                 })
             }
 
@@ -214,6 +220,7 @@ class Temas extends Component {
         
     }
     //pasar a la siguiente pregunta
+    
     handleNext() {
         let preguntas = this.state.pregunta;
         if (preguntas.length !== 1) {
@@ -237,6 +244,19 @@ class Temas extends Component {
             }
         } else {
             alert('terminaste');
+            const id_usuario = this.state.usuario.id_usuario;
+
+            const bodyRequest= {
+                id_usuario : id_usuario,
+                id_subtema : this.state.idSubtema,
+                completado: this.state.errores>0 ? 0 : 1,
+
+              }
+      
+              PostData('usuarioSubtema',bodyRequest)
+              .then(response => {
+                    console.log(response.data);
+                  });
             /**
              * Objeto amalcena las monedas del usuario y sus monedas
              */
