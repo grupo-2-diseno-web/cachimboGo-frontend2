@@ -1,6 +1,18 @@
 import React, { Component } from 'react';
 import { Button, Modal, Form, FormGroup, ModalHeader, ModalBody, ModalFooter, Row, Container, Input, Label, Col } from 'reactstrap';
 import { FaUserAlt } from "react-icons/fa";
+
+// import { UncontrolledAlert } from 'reactstrap';
+import { Alert } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
+
+import PostData from './../../servicios/PostData';
+
+import './auth.css';
+
+const REGEX_USERNAME = /^[a-zA-Z0-9_.-]*$/;
+
 class ModalPreguntas extends Component {
 
   constructor() {
@@ -11,7 +23,9 @@ class ModalPreguntas extends Component {
       nombres: "",
       apellidos: "",
       correo: "",
-      registrar: true
+      registrar: true,
+      loader: false,
+      showError: false
     }
     this.handleInputUser = this.handleInputUser.bind(this);
     this.handleInputContra = this.handleInputContra.bind(this);
@@ -23,41 +37,47 @@ class ModalPreguntas extends Component {
     this.handleCorreo = this.handleCorreo.bind(this);
     this.handleRegistrar = this.handleRegistrar.bind(this);
     this.handleRegistro = this.handleRegistro.bind(this);
+
+    // myHandkles
+    this.handleChangeInput = this.handleChangeInput.bind(this);
+    this.handleSubmitAuth = this.handleSubmitAuth.bind(this);
+    this.onDismiss = this.onDismiss.bind(this);
+
   }
   handleInputUser(data) {
     this.setState({
       userIn: data.target.value
     })
   }
-  handleRegistro(){
+  handleRegistro() {
     const obj = {
-      usuario:   this.state.userIn,
-      password:  this.state.contraIn,
-      nombres:   this.state.nombres,
+      usuario: this.state.userIn,
+      password: this.state.contraIn,
+      nombres: this.state.nombres,
       apellidos: this.state.apellidos,
-      correo:    this.state.correo,
-      monedas:   0
+      correo: this.state.correo,
+      monedas: 0
     }
-    this.props.registrar(obj,this.handleCambiarRegistro);
+    this.props.registrar(obj, this.handleCambiarRegistro);
   }
   handleNombres(data) {
     this.setState({
-      nombres:data.target.value
+      nombres: data.target.value
     });
   }
-  handleCambiarRegistro(){
+  handleCambiarRegistro() {
     this.setState({
-      registrar:!this.state.registrar
+      registrar: !this.state.registrar
     });
   }
   handleApellidos(data) {
     this.setState({
-      apellidos:data.target.value
+      apellidos: data.target.value
     });
   }
   handleCorreo(data) {
     this.setState({
-      correo:data.target.value
+      correo: data.target.value
     });
   }
   handleKeyPress = (event) => {
@@ -65,15 +85,117 @@ class ModalPreguntas extends Component {
       this.props.login(this.state.userIn, this.state.contraIn);
     }
   }
+
+  handleSubmitAuth(ev) {
+    ev.preventDefault();
+    const isValidForm = this.isValidForm(this.state);
+    if (isValidForm) {
+      this.setState({ loader: true });
+      const { userIn, contraIn } = this.state;
+      const datos = { userIn, contraIn };
+
+      PostData("login", datos, true)
+        .then(
+          (result) => {
+            if (result.usuario) {
+              sessionStorage.setItem('user', JSON.stringify(result));
+              this.setState({
+                user: result,
+                login: !this.state.login,
+                modal: !this.state.modal
+              })
+            } else {
+              this.setState({ showError: true });
+            }
+            this.setState({ loader: false });
+          });
+    } else {
+
+    }
+  }
+
+  handleSubmitRegister(ev){
+    ev.preventDefault();
+  }
+
+  handleChangeInput(ev) {
+    const nameInput = ev.target.name;
+    const valueInput = ev.target.value;
+    this.setState({ [nameInput]: valueInput });
+  }
+
+  isValidForm(valueForm) {
+    const { userIn, contraIn } = { ...valueForm };
+    let isValid = false;
+
+    const isRequired = this.isRequired(userIn) && this.isRequired(contraIn);
+    const isValidValue = REGEX_USERNAME.test(userIn.trim());
+    isValid = isRequired && isValidValue;
+    return isValid;
+  }
+
+  isRequired(value) {
+    const _value = value.trim();
+    return !!_value.length;
+  }
+
+  onDismiss() {
+    this.setState({ showError: false });
+  }
+
   handleRegistrar() {
     return (
-      <Modal isOpen={this.props.modal} size='md'>
-        <ModalHeader toggle={this.props.toggle} charcode="X" className='text-align-center'>Registrar</ModalHeader>
+      <Modal isOpen={this.props.modal} size='md' className='layout-window view-register'>
+        <div className='layout-window__left position-relative'>
+          <Alert color="danger" className='alert-auth' isOpen={this.state.showError} toggle={this.onDismiss}>
+            Usuario/Password Incorrectos
+          </Alert>
+          <div className='form-auth'>
+            <div className='text-center'>
+              Imagen Logo
+           </div>
+            <h3 className='text-uppercase'>
+              Crear Cuenta
+           </h3>
+            <form autoComplete='off'>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Nombres</label>
+                <input placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} />
+              </div>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Apellidos</label>
+                <input placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} />
+              </div>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Correo</label>
+                <input placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} />
+              </div>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Usuario</label>
+                <input placeholder='Ej. jhonwick' name='usuario' onChange={this.handleChangeInput} value={this.state.userIn} />
+              </div>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Contraseña</label>
+                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.contraIn} />
+              </div>
+              <button type='submit' onClick={this.handleSubmitRegister} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.state.loader) ? 'go-btn-loading' : null}`}>
+                Registrar
+                {(this.state.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
+              </button>
+              <div className='divider'></div>
+              <div className='text-auth'>
+                ¿Ya tienes una cuenta?, Inicia sesion  <span className='pointer' onClick={() => { this.setState({ registrar: !this.state.registrar }) }}> aqui</span>
+              </div>
+            </form>
+          </div>
+        </div>
+        {/* <div className='layout-window__right'></div> */}
+        {/* <ModalHeader toggle={this.props.toggle} charcode="X" className='text-align-center'>Registrar</ModalHeader>
         <ModalBody>
           <Form>
             <FormGroup>
               <Label for="nombre">Nombre</Label>
-              <Input type="text" name="nombre" id="nombre" onChange={this.handleNombres} placeholder="nombre" value={this.state.nombres}/>
+              <Input type="text" name="nombre" id="nombre" onChange={this.handleNombres} placeholder="nombre" value={this.state.nombres} />
             </FormGroup>
             <FormGroup>
               <Label for="examplePassword">Apellidos</Label>
@@ -104,17 +226,51 @@ class ModalPreguntas extends Component {
               </Col>
             </Row>
           </Container>
-        </ModalFooter>
+        </ModalFooter> */}
       </Modal>
     )
   }
   handleLogin() {
+    // const 
     return (
-      <Modal isOpen={this.props.modal} size='sm'>
-        <ModalHeader toggle={this.props.toggle} charcode="X" className='text-align-center'>Iniciar Sesion</ModalHeader>
+      <Modal isOpen={this.props.modal} size='sm' className='layout-window'>
+        <div className='layout-window__left position-relative'>
+          <Alert color="danger" className='alert-auth' isOpen={this.state.showError} toggle={this.onDismiss}>
+            Usuario/Password Incorrectos
+          </Alert>
+          <div className='form-auth'>
+            <div className='text-center'>
+              Imagen Logo
+           </div>
+            <h3 className='text-uppercase'>
+              Ingresa con tu cuenta
+           </h3>
+            <form autoComplete='off'>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Usuario</label>
+                <input placeholder='Ej. jhonwick' name='userIn' onChange={this.handleChangeInput} value={this.state.userIn} />
+              </div>
+              <div className='go-input mb-3'>
+                <label htmlFor="" className='d-block'>Usuario</label>
+                <input type='password' name='contraIn' placeholder='******' onChange={this.handleChangeInput} value={this.state.contraIn} />
+              </div>
+              <button type='submit' onClick={this.handleSubmitAuth} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.state.loader) ? 'go-btn-loading' : null}`}>
+                Ingresar
+                {(this.state.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
+              </button>
+              <div className='divider'></div>
+              <div className='text-auth'>
+                ¿No tienes una cuenta?, registrate  <span className='pointer' onClick={() => { this.setState({ registrar: !this.state.registrar }) }}> aqui</span>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div className='layout-window__right'></div>
+
+        {/* <ModalHeader toggle={this.props.toggle} charcode="X" className='text-align-center'>Iniciar Sesion</ModalHeader>
         <ModalBody>
           <Label><span><FaUserAlt /></span>Usuario</Label>
-          <Input type="text" placeholder="ingrese usuario" onChange={this.handleInputUser} onKeyPress={this.handleKeyPress} value={this.state.userIn}/><br />
+          <Input type="text" placeholder="ingrese usuario" onChange={this.handleInputUser} onKeyPress={this.handleKeyPress} value={this.state.userIn} /><br />
           <Label>Contraseña</Label>
           <Input type="password" placeholder="Contraseña" onChange={this.handleInputContra} onKeyPress={this.handleKeyPress} value={this.state.contraIn} />
         </ModalBody>
@@ -129,7 +285,7 @@ class ModalPreguntas extends Component {
               </Col>
             </Row>
           </Container>
-        </ModalFooter>
+        </ModalFooter> */}
       </Modal>
     )
   }

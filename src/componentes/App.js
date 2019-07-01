@@ -31,7 +31,7 @@ class App extends Component {
      * Verifica si el usuario existe 
      * para restringir el acceso a la aplicacion
      */
-    componentWillMount() {
+    componentDidMount() {
             const usuario = JSON.parse(sessionStorage.getItem('user'));
             if (usuario) {
                 this.setState({
@@ -92,7 +92,6 @@ class App extends Component {
         sessionStorage.removeItem('user');
     }
     render() {
-        //https://github.com/trendmicro-frontend/react-sidenav
         const { children } = this.props;
         //comentario 2
         if (this.state.login) {
@@ -116,7 +115,6 @@ class App extends Component {
                 <Login modal={this.state.modal} login={this.handleLogin} registrar={this.handleRegistrar}/>
             )
         }
-   
     }
 }
 
