@@ -10,7 +10,12 @@ class Navigator extends Component {
 
     constructor(props){
         super(props);
+        const usuario = JSON.parse(sessionStorage.getItem('user'));
         
+
+        this.state = {
+            username:usuario.usuario ,     
+        };
     }
     render() {
         return (
@@ -26,6 +31,12 @@ class Navigator extends Component {
 <hr class="sidebar-divider my-0"/>
 
 <div class="imagen">
+</div>
+
+<div className="username">
+    
+    {this.state.username}
+    
 </div>
 
 <hr class="sidebar-divider"/>
