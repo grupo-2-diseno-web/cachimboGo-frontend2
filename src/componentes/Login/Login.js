@@ -28,9 +28,12 @@ class ModalPreguntas extends Component {
       showError: false,
       username: '',
       password: '',
-      isErrorUsername:false,
-      isErrorPassword:false,
+      submitted: false
     }
+
+    this.isValidUsername = false;
+    this.isValidPassword = false;
+
     this.handleInputUser = this.handleInputUser.bind(this);
     this.handleInputContra = this.handleInputContra.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -46,9 +49,6 @@ class ModalPreguntas extends Component {
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleSubmitAuth = this.handleSubmitAuth.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
-
-    this.isErrorUsername = false;
-    this.isErrorPassword = false;
 
   }
   handleInputUser(data) {
@@ -95,34 +95,13 @@ class ModalPreguntas extends Component {
 
   handleSubmitAuth(ev) {
     ev.preventDefault();
-    const isValidForm = this.isValidForm(this.state);
-    if (isValidForm) {
-      // this.setState({ loader: true });
+    this.setState({ submitted: true });
+    if (this.isValidUsername && this.isValidPassword) {
       const { username, password } = this.state;
       const datos = { username, password };
-      
       this.props.login(username, password);
-
-      // PostData("login", datos, true)
-      //   .then(
-      //     (result) => {
-      //       if (result.usuario) {
-      //         sessionStorage.setItem('user', JSON.stringify(result));
-      //         this.setState({
-      //           user: result,
-      //           login: !this.state.login,
-      //           modal: !this.state.modal
-      //         })
-      //         history.push('/');
-      //       } else {
-      //         this.setState({ showError: true });
-      //       }
-      //       this.setState({ loader: false });
-      //     });
     } else {
-      const { username, password } = this.state;
-      if(this.isRequired(username)){this.setState({isErrorUsername:false})}
-      if(this.isRequired(password)){this.setState({isErrorPassword:false})}
+     
     }
   }
 
@@ -130,28 +109,32 @@ class ModalPreguntas extends Component {
     ev.preventDefault();
   }
 
-  handleChangeInput(ev) {
-    const nameInput = ev.target.name;
-    const valueInput = ev.target.value;
-    this.setState({ [nameInput]: valueInput });
-  }
+  handleChangeInput({ target }) {
+    const valueInput = target.value
+    const valueNameInput = target.name;
 
-  isValidForm(valueForm) {
-    const { username, password } = { ...valueForm };
     let isValid = false;
 
-    if(!this.isRequired(username)){this.setState({isErrorUsername:true})}
-    if(!this.isRequired(password)){this.setState({isErrorPassword:true})}
+    switch (valueNameInput) {
+      case 'username':
+        this.isValidUsername = this.getValidRegex(REGEX_USERNAME, valueInput) && (valueInput.trim().length);
+        break;
+      case 'password':
+        this.isValidPassword = (valueInput.trim().length);
+        break;
+      default: break;
+    }
 
-    const isRequired = this.isRequired(username) && this.isRequired(password);
-    const isValidValue = REGEX_USERNAME.test(username.trim());
-    isValid = isRequired && isValidValue;
 
-
-
-
-    return isValid;
+    this.setState({
+      [valueNameInput]: valueInput
+    });
   }
+
+  getValidRegex(regex, value) {
+    return REGEX_USERNAME.test(value);
+  }
+
 
   isRequired(value) {
     const _value = value.trim();
@@ -161,6 +144,18 @@ class ModalPreguntas extends Component {
   onDismiss() {
     this.setState({ showError: false });
   }
+
+  getMessageError(valueName, isValid, submitted) {
+    if(valueName.trim().length === 0 && submitted){
+      return <p className='text-danger msg-error-input'>Campo Requerido</p>
+    }
+    if(valueName.trim().length > 0 && !isValid){
+      return <p className='text-danger msg-error-input'>Campo invalido</p>
+    }
+  }
+
+
+
 
   handleRegistrar() {
     return (
@@ -214,7 +209,7 @@ class ModalPreguntas extends Component {
           <Form>
             <FormGroup>
               <Label for="nombre">Nombre</Label>
-              <Input type="text" name="nombre" id="nombre" onChange={this.handleNombres} placeholder="nombre" value={this.state.nombres} />
+              <Input type="text" nagetErrorValidationme="nombre" id="nombre" onChange={this.handleNombres} placeholder="nombre" value={this.state.nombres} />
             </FormGroup>
             <FormGroup>
               <Label for="examplePassword">Apellidos</Label>
@@ -244,7 +239,7 @@ class ModalPreguntas extends Component {
                 <Button onClick={this.handleRegistro}>Registrar</Button>
               </Col>
             </Row>
-          </Container>
+          </Container>isInvalidUsername
         </ModalFooter> */}
       </Modal>
     )
@@ -265,16 +260,16 @@ class ModalPreguntas extends Component {
               Ingresa con tu cuenta
            </h3>
             <form autoComplete='off'>
-              <div className='go-input mb-3'>
-                <label htmlFor="" className='d-block'>Usuario</label>
-                <input placeholder='Ej. jhonwick' name='username' onChange={this.handleChangeInput} value={this.state.username} />
+              <div className='go-input mb-2'>
+                <label htmlFor="" className='d-block mb-2'>Usuario</label>
+                <input placeholder='Ej. jhonwick' name='username' onChange={this.handleChangeInput} value={this.state.username.value} />
               </div>
-              {(this.isErrorUsername || this.props.loader) ? <p>Campo Incorrecto</p> : null}
-              <div className='go-input mb-3'>
-                <label htmlFor="" className='d-block'>Contraseña</label>
+              {this.getMessageError(this.state.username, this.isValidUsername, this.state.submitted)}
+              <div className='go-input mb-2'>
+                <label htmlFor="" className='d-block mb-2'>Contraseña</label>
                 <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.password} />
               </div>
-              {(this.isErrorPassword) ? <p>Campo Incorrecto</p> : null}
+              {this.getMessageError(this.state.password, this.isValidPassword, this.state.submitted)}
               <button type='submit' onClick={this.handleSubmitAuth} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.props.loader) ? 'go-btn-loading' : null}`}>
                 Ingresar
                 {(this.props.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
