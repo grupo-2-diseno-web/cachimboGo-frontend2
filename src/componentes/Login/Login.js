@@ -30,6 +30,7 @@ class ModalPreguntas extends Component {
       password: '',
       isErrorUsername:false,
       isErrorPassword:false,
+      monedas: 0
     }
     this.handleInputUser = this.handleInputUser.bind(this);
     this.handleInputContra = this.handleInputContra.bind(this);
@@ -46,7 +47,7 @@ class ModalPreguntas extends Component {
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleSubmitAuth = this.handleSubmitAuth.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
-
+    this.handleSubmitRegister = this.handleSubmitRegister.bind(this);
     this.isErrorUsername = false;
     this.isErrorPassword = false;
 
@@ -127,7 +128,32 @@ class ModalPreguntas extends Component {
   }
 
   handleSubmitRegister(ev) {
-    ev.preventDefault();
+    ev.preventDefault();           
+    const inputName = document.querySelector('input[name=nombres]'),
+          inputApellidos = document.querySelector('input[name=apellidos]'),
+          inputCorreo = document.querySelector('input[name=correo]'),
+          inputUsuario = document.querySelector('input[name=usuario]'),
+          inputPassword = document.querySelector('input[name=password]');
+    inputName.className = (!this.state.nombres || this.state.nombres === '') ? 'border-danger' : '';
+    inputApellidos.className = (!this.state.apellidos || this.state.apellidos === '') ? 'border-danger' : '';
+    inputCorreo.className = (!this.state.correo || this.state.correo === '') ? 'border-danger' : '';
+    inputUsuario.className = (!this.state.usuario || this.state.usuario === '') ? 'border-danger' : '';
+    inputPassword.className = (!this.state.password || this.state.password === '') ? 'border-danger' : '';
+    if (!this.state.nombres || this.state.nombres === '') {      
+      alert('Campo Nombres es requerido');
+    } else if (!this.state.apellidos || this.state.apellidos ==='') {      
+      alert('Campo Apellidos es requerido');
+    } else if (!this.state.correo || this.state.correo ==='' || !(/\S+@\S+\.\S+/.test(this.state.correo))) {      
+      alert('Ingrese un correo válido');
+    } else if (!this.state.usuario || this.state.usuario ==='' || !REGEX_USERNAME.test(this.state.usuario)) {      
+      alert('Ingrese un nombre de Usuario valido(solo puede contener mayúsculas, minúsculas, caracteres "-" y "_")');
+    } else if (!this.state.password || this.state.password ==='') {      
+      alert('Campo Password es requerido');
+    } else {
+      this.props.registrar(this.state, () => { 
+        this.setState({registrar: !this.state.registrar});
+      });
+    }            
   }
 
   handleChangeInput(ev) {
@@ -179,23 +205,23 @@ class ModalPreguntas extends Component {
             <form autoComplete='off'>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Nombres</label>
-                <input placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} />
+                <input placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} required/>
               </div>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Apellidos</label>
-                <input placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} />
+                <input placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} required/>
               </div>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Correo</label>
-                <input placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} />
+                <input type='email' placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} required/>
               </div>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Usuario</label>
-                <input placeholder='Ej. jhonwick' name='usuario' onChange={this.handleChangeInput} value={this.state.userIn} />
+                <input placeholder='Ej. jhonwick' name='usuario' onChange={this.handleChangeInput} value={this.state.usuario} required/>
               </div>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Contraseña</label>
-                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.contraIn} />
+                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.password} required/>
               </div>
               <button type='submit' onClick={this.handleSubmitRegister} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.state.loader) ? 'go-btn-loading' : null}`}>
                 Registrar

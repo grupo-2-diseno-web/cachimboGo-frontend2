@@ -63,8 +63,7 @@ class Temas extends Component {
         }*/
         const dir = 'subtemaTema/';
         const data = props;
-        GetData(dir, data, true).then((result) => {
-            console.log(result.data);
+        GetData(dir, data, true).then((result) => {            
             this.setState({
                 subtemas: result.data,
                 id_tema: props,
@@ -76,12 +75,10 @@ class Temas extends Component {
      * obtener las peguntas por subtema
      * @param {*subtema} props 
      */
-    handleGetPreguntas(props) {
-        console.log("esta abriendo el modal ..." + props);
+    handleGetPreguntas(props) {        
         const dir = 'pregunta/';
         const data = `${props}/1`;
         GetData(dir, data, true).then((result) => {
-            console.log(result.data);
             this.setState({
                 pregunta: result.data,
                 modal: !this.state.modal,
@@ -220,8 +217,8 @@ class Temas extends Component {
               }
       
               PostData('usuarioSubtema',bodyRequest)
-              .then(response => {
-                    console.log(response.data);
+              .then(response => {                    
+                    this.props.refrescarTemas();
                   });
             /**
              * Objeto amalcena las monedas del usuario y sus monedas
@@ -294,9 +291,7 @@ class Temas extends Component {
         }
     }
     render() {
-        const temas = this.props.temas;
-        //console.log(temas);
-        console.log("temas");
+        const temas = this.props.temas;                
         if (this.state.open) {
             return (
                 <Row>
@@ -316,7 +311,7 @@ class Temas extends Component {
                 </div>
                 <Row>
                     {this.state.subtemas && this.state.subtemas.map((valor, key) =>
-                            <Col sm='4' className="col my-5 mx-5" key={key}><SubTema data={valor} getPreguntas={this.handleGetPreguntas} /></Col>
+                            <Col sm='4' className="col my-5 mx-5" key={key}><SubTema data={valor} getPreguntas={this.handleGetPreguntas} getTemas={this.props.getTemas}/></Col>
                         )
                     }
                     { typeof this.state.pregunta !== 'undefined'  ? 

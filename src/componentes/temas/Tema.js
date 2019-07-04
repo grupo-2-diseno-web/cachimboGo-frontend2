@@ -9,8 +9,7 @@ import {
 
 const Tema = ({data,getSubtemas}) => {
   const datos = data;
-  const subtemas=getSubtemas;
-  //console.log(data);
+  const subtemas=getSubtemas;  
   return (
     <Card className="text-justify">
       <CardBody>

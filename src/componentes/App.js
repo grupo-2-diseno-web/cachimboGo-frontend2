@@ -74,14 +74,12 @@ class App extends Component {
          * @param {*} estado 
          * Registrar a un nuevo usuario
          */
-    handleRegistrar(props, estado) {
-            console.log(props);
+    handleRegistrar(props, estado) {            
             PostData('usuario', props).then((result) => {
                 if (result) {
                     alert('Usuario registrado con exito');
                     estado();
-                }
-                console.log(result);
+                }                
             })
         }
         /**
