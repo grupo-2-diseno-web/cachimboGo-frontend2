@@ -17,6 +17,7 @@ class App extends Component {
         this.state = {
             login: false,
             modal: true,
+            loader:false,
             user: {}
         }
         this.handleLogin = this.handleLogin.bind(this);
@@ -49,16 +50,19 @@ class App extends Component {
                 username: user,
                 password: contra
             }
+            this.setState({loader:true})
             PostData("login", datos, true).then((result) => {
                 if (result.usuario) {
                     sessionStorage.setItem('user', JSON.stringify(result));
                     this.setState({
                         user: result,
                         login: !this.state.login,
-                        modal: !this.state.modal
+                        modal: !this.state.modal,
+                        loader: false
                     })
                 } else {
                     alert("Usuario Incorrecto");
+                    this.setState({loader:false});
                 }
 
             })
@@ -112,7 +116,7 @@ class App extends Component {
 
         }else{
             return (
-                <Login modal={this.state.modal} login={this.handleLogin} registrar={this.handleRegistrar}/>
+                <Login modal={this.state.modal} login={this.handleLogin} registrar={this.handleRegistrar} loader={this.state.loader}/>
             )
         }
     }

@@ -25,7 +25,11 @@ class ModalPreguntas extends Component {
       correo: "",
       registrar: true,
       loader: false,
-      showError: false
+      showError: false,
+      username: '',
+      password: '',
+      isErrorUsername:false,
+      isErrorPassword:false,
     }
     this.handleInputUser = this.handleInputUser.bind(this);
     this.handleInputContra = this.handleInputContra.bind(this);
@@ -42,6 +46,9 @@ class ModalPreguntas extends Component {
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleSubmitAuth = this.handleSubmitAuth.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
+
+    this.isErrorUsername = false;
+    this.isErrorPassword = false;
 
   }
   handleInputUser(data) {
@@ -90,31 +97,36 @@ class ModalPreguntas extends Component {
     ev.preventDefault();
     const isValidForm = this.isValidForm(this.state);
     if (isValidForm) {
-      this.setState({ loader: true });
-      const { userIn, contraIn } = this.state;
-      const datos = { userIn, contraIn };
+      // this.setState({ loader: true });
+      const { username, password } = this.state;
+      const datos = { username, password };
+      
+      this.props.login(username, password);
 
-      PostData("login", datos, true)
-        .then(
-          (result) => {
-            if (result.usuario) {
-              sessionStorage.setItem('user', JSON.stringify(result));
-              this.setState({
-                user: result,
-                login: !this.state.login,
-                modal: !this.state.modal
-              })
-            } else {
-              this.setState({ showError: true });
-            }
-            this.setState({ loader: false });
-          });
+      // PostData("login", datos, true)
+      //   .then(
+      //     (result) => {
+      //       if (result.usuario) {
+      //         sessionStorage.setItem('user', JSON.stringify(result));
+      //         this.setState({
+      //           user: result,
+      //           login: !this.state.login,
+      //           modal: !this.state.modal
+      //         })
+      //         history.push('/');
+      //       } else {
+      //         this.setState({ showError: true });
+      //       }
+      //       this.setState({ loader: false });
+      //     });
     } else {
-
+      const { username, password } = this.state;
+      if(this.isRequired(username)){this.setState({isErrorUsername:false})}
+      if(this.isRequired(password)){this.setState({isErrorPassword:false})}
     }
   }
 
-  handleSubmitRegister(ev){
+  handleSubmitRegister(ev) {
     ev.preventDefault();
   }
 
@@ -125,12 +137,19 @@ class ModalPreguntas extends Component {
   }
 
   isValidForm(valueForm) {
-    const { userIn, contraIn } = { ...valueForm };
+    const { username, password } = { ...valueForm };
     let isValid = false;
 
-    const isRequired = this.isRequired(userIn) && this.isRequired(contraIn);
-    const isValidValue = REGEX_USERNAME.test(userIn.trim());
+    if(!this.isRequired(username)){this.setState({isErrorUsername:true})}
+    if(!this.isRequired(password)){this.setState({isErrorPassword:true})}
+
+    const isRequired = this.isRequired(username) && this.isRequired(password);
+    const isValidValue = REGEX_USERNAME.test(username.trim());
     isValid = isRequired && isValidValue;
+
+
+
+
     return isValid;
   }
 
@@ -248,15 +267,17 @@ class ModalPreguntas extends Component {
             <form autoComplete='off'>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Usuario</label>
-                <input placeholder='Ej. jhonwick' name='userIn' onChange={this.handleChangeInput} value={this.state.userIn} />
+                <input placeholder='Ej. jhonwick' name='username' onChange={this.handleChangeInput} value={this.state.username} />
               </div>
+              {(this.isErrorUsername || this.props.loader) ? <p>Campo Incorrecto</p> : null}
               <div className='go-input mb-3'>
-                <label htmlFor="" className='d-block'>Usuario</label>
-                <input type='password' name='contraIn' placeholder='******' onChange={this.handleChangeInput} value={this.state.contraIn} />
+                <label htmlFor="" className='d-block'>Contraseña</label>
+                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.password} />
               </div>
-              <button type='submit' onClick={this.handleSubmitAuth} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.state.loader) ? 'go-btn-loading' : null}`}>
+              {(this.isErrorPassword) ? <p>Campo Incorrecto</p> : null}
+              <button type='submit' onClick={this.handleSubmitAuth} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.props.loader) ? 'go-btn-loading' : null}`}>
                 Ingresar
-                {(this.state.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
+                {(this.props.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
               </button>
               <div className='divider'></div>
               <div className='text-auth'>
