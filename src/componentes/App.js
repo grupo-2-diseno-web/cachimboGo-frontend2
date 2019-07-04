@@ -18,6 +18,7 @@ class App extends Component {
             login: false,
             modal: true,
             loader:false,
+            haveErrorLogin:false,
             user: {}
         }
         this.handleLogin = this.handleLogin.bind(this);
@@ -114,7 +115,7 @@ class App extends Component {
 
         }else{
             return (
-                <Login modal={this.state.modal} login={this.handleLogin} registrar={this.handleRegistrar} loader={this.state.loader}/>
+                <Login modal={this.state.modal} login={this.handleLogin} registrar={this.handleRegistrar} loader={this.state.loader} haveErrorLogin={this.state.haveErrorLogin}/>
             )
         }
     }

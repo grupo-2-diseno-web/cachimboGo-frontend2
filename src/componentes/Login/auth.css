@@ -164,3 +164,8 @@
 
   .layout-window .layout-window__right {}
 }
+
+.msg-error-input{
+  font-size: 14px;
+  margin-bottom: 4px;
+}
