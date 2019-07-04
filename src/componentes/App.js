@@ -101,7 +101,7 @@ class App extends Component {
                 return (
                     <div id = "page-top" >
                     <div id="wrapper2">
-                    <Nav logout = { this.handleLogout }/> 
+                    <Nav logout = { this.handleLogout } /> 
                         <div id="content-wrapper" class="d-flex flex-column">
                         <Section body = { children }/>
 

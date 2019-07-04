@@ -7,6 +7,11 @@ import { Link } from 'react-router-dom';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 
 class Navigator extends Component {
+
+    constructor(props){
+        super(props);
+        
+    }
     render() {
         return (
 <div class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -81,6 +86,16 @@ class Navigator extends Component {
 
 
 <hr class="sidebar-divider d-none d-md-block"/>
+
+<li class="nav-item collapsed"  >
+
+    <a  onClick={this.props.logout} className="nav-link" style={{cursor:"pointer"}}> 
+        <i class="fas fa-fw fa-times"></i>
+          <span>Cerrar Sesión</span>
+    </a>
+
+
+</li>
 </div>
 
 
