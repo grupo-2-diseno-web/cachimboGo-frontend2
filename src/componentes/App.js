@@ -75,14 +75,12 @@ class App extends Component {
          * @param {*} estado 
          * Registrar a un nuevo usuario
          */
-    handleRegistrar(props, estado) {
-            console.log(props);
+    handleRegistrar(props, estado) {            
             PostData('usuario', props).then((result) => {
                 if (result) {
                     alert('Usuario registrado con exito');
                     estado();
-                }
-                console.log(result);
+                }                
             })
         }
         /**
@@ -103,7 +101,7 @@ class App extends Component {
                 return (
                     <div id = "page-top" >
                     <div id="wrapper2">
-                    <Nav logout = { this.handleLogout }/> 
+                    <Nav logout = { this.handleLogout } /> 
                         <div id="content-wrapper" class="d-flex flex-column">
                         <Section body = { children }/>
 

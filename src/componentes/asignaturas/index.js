@@ -15,6 +15,7 @@ class Asignaturas extends Component {
                 usuario: JSON.parse(sessionStorage.getItem('user'))
             }
             this.handleGetTemas = this.handleGetTemas.bind(this);
+            this.refrescarTemas = this.refrescarTemas.bind(this);            
             this.cerrar=this.cerrar.bind(this);
         }
         /**
@@ -26,8 +27,7 @@ class Asignaturas extends Component {
         const data=`?id_usuario=${this.state.usuario.id_usuario}`;
        
 
-        GetData(dir, data).then((result) => {
-            console.log(result);
+        GetData(dir, data).then((result) => {            
             this.setState({
                 asignaturas: result.data
             })
@@ -47,8 +47,7 @@ class Asignaturas extends Component {
         const dir = 'temaAsignatura';
         const data=`?id_usuario=${this.state.usuario.id_usuario}&id_asignatura=${props}`;
 
-        GetData(dir, data, true).then((result) => {
-            console.log(result.data);
+        GetData(dir, data, true).then((result) => {            
             this.setState({
                 temas: result.data,
                 id_asignatura: props,
@@ -56,6 +55,17 @@ class Asignaturas extends Component {
             })
         })
         
+    }
+    refrescarTemas() {
+        const dir = 'temaAsignatura';
+        const data=`?id_usuario=${this.state.usuario.id_usuario}&id_asignatura=${this.state.id_asignatura}`;
+
+        GetData(dir, data, true).then((result) => {            
+            this.setState({
+                ...this.state,
+                temas: result.data,
+            })
+        })
     }
 
     render() {
@@ -79,7 +89,7 @@ class Asignaturas extends Component {
         } else {
             return ( <Row >
                 
-                <Temas temas = { this.state.temas }  cerrar={this.cerrar}
+                <Temas temas = { this.state.temas }  cerrar={this.cerrar} refrescarTemas={this.refrescarTemas}
                 /> </Row>
             )
         }
