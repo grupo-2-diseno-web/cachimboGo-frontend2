@@ -28,7 +28,7 @@ class ModalPreguntas extends Component {
       showError: false,
       username: '',
       password: '',
-      submitted: false
+      submitted: false,
       monedas: 0
     }
 
