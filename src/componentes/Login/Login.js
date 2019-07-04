@@ -8,10 +8,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 
 import PostData from './../../servicios/PostData';
+import ImageLogin from './../../img/itest.png'
 
 import './auth.css';
 
 const REGEX_USERNAME = /^[a-zA-Z0-9_.-]*$/;
+const REGEX_EMAIL = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const REGEX_NAMES = /^(?![\s.]+$)[a-zA-Z\s.]*$/;
+
 
 class ModalPreguntas extends Component {
 
@@ -28,6 +32,7 @@ class ModalPreguntas extends Component {
       showError: false,
       username: '',
       password: '',
+      usuario:'',
       submitted: false,
       monedas: 0
     }
@@ -35,27 +40,34 @@ class ModalPreguntas extends Component {
     this.isValidUsername = false;
     this.isValidPassword = false;
 
-    this.handleInputUser = this.handleInputUser.bind(this);
-    this.handleInputContra = this.handleInputContra.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleCambiarRegistro = this.handleCambiarRegistro.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.handleNombres = this.handleNombres.bind(this);
-    this.handleApellidos = this.handleApellidos.bind(this);
-    this.handleCorreo = this.handleCorreo.bind(this);
-    this.handleRegistrar = this.handleRegistrar.bind(this);
-    this.handleRegistro = this.handleRegistro.bind(this);
+    this.isValidNombres = false;
+    this.isValidApellidos = false;
+    this.isValidEmail = false;
+    this.isValidUsuario = false;
+    
+
+    this.handleInputUser = this.handleInputUser.bind( this );
+    this.handleInputContra = this.handleInputContra.bind( this );
+    this.handleKeyPress = this.handleKeyPress.bind( this );
+    this.handleCambiarRegistro = this.handleCambiarRegistro.bind( this );
+    this.handleLogin = this.handleLogin.bind( this );
+    this.handleNombres = this.handleNombres.bind( this );
+    this.handleApellidos = this.handleApellidos.bind( this );
+    this.handleCorreo = this.handleCorreo.bind( this );
+    this.handleRegistrar = this.handleRegistrar.bind( this );
+    this.handleRegistro = this.handleRegistro.bind( this );
 
     // myHandkles
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleSubmitAuth = this.handleSubmitAuth.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
     this.handleSubmitRegister = this.handleSubmitRegister.bind(this);
+    this.handleSubmitRegAUth = this.handleSubmitRegAUth.bind(this);
   }
-  handleInputUser(data) {
-    this.setState({
+  handleInputUser( data ) {
+    this.setState( {
       userIn: data.target.value
-    })
+    } )
   }
   handleRegistro() {
     const obj = {
@@ -66,43 +78,62 @@ class ModalPreguntas extends Component {
       correo: this.state.correo,
       monedas: 0
     }
-    this.props.registrar(obj, this.handleCambiarRegistro);
+    this.props.registrar( obj, this.handleCambiarRegistro );
   }
-  handleNombres(data) {
-    this.setState({
+  handleNombres( data ) {
+    this.setState( {
       nombres: data.target.value
-    });
+    } );
   }
   handleCambiarRegistro() {
-    this.setState({
+    this.setState( {
       registrar: !this.state.registrar
-    });
+    } );
   }
-  handleApellidos(data) {
-    this.setState({
+  handleApellidos( data ) {
+    this.setState( {
       apellidos: data.target.value
-    });
+    } );
   }
-  handleCorreo(data) {
-    this.setState({
+  handleCorreo( data ) {
+    this.setState( {
       correo: data.target.value
-    });
+    } );
   }
-  handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      this.props.login(this.state.userIn, this.state.contraIn);
+  handleKeyPress = ( event ) => {
+    if ( event.key === 'Enter' ) {
+      this.props.login( this.state.userIn, this.state.contraIn );
     }
   }
 
-  handleSubmitAuth(ev) {
+  handleSubmitAuth( ev ) {
     ev.preventDefault();
-    this.setState({ submitted: true });
-    if (this.isValidUsername && this.isValidPassword) {
+    this.setState( { submitted: true } );
+    if ( this.isValidUsername && this.isValidPassword ) {
       const { username, password } = this.state;
       const datos = { username, password };
-      this.props.login(username, password);
+      this.props.login( username, password );
     } else {
-     
+
+    }
+  }
+  handleSubmitRegAUth(ev){
+    ev.preventDefault();
+    this.setState( { submitted: true } );
+    if ( this.isValidNombres && this.isValidApellidos && this.isValidEmail && this.isValidUsername && this.isValidPassword ) {
+      const { nombres, apellidos,correo,username,password } = this.state;
+      const obj = {
+        usuario: username,
+        password: password,
+        nombres: nombres,
+        apellidos: apellidos,
+        correo: correo,
+        monedas: 0
+      }
+      this.props.registrar( obj, this.handleCambiarRegistro );
+      // this.props.login( username, password );
+    } else {
+
     }
   }
 
@@ -135,47 +166,57 @@ class ModalPreguntas extends Component {
     }            
   }
 
-  handleChangeInput({ target }) {
+  
+
+  handleChangeInput( { target } ) {
     const valueInput = target.value
     const valueNameInput = target.name;
 
     let isValid = false;
 
-    switch (valueNameInput) {
+    switch ( valueNameInput ) {
       case 'username':
-        this.isValidUsername = this.getValidRegex(REGEX_USERNAME, valueInput) && (valueInput.trim().length);
+        this.isValidUsername = this.getValidRegex( REGEX_USERNAME, valueInput ) && ( valueInput.trim().length );
         break;
       case 'password':
-        this.isValidPassword = (valueInput.trim().length);
+        this.isValidPassword = ( valueInput.trim().length );
+        break;
+      case 'nombres':
+        this.isValidNombres = this.getValidRegex( REGEX_NAMES, valueInput ) && ( valueInput.trim().length );
+        break;
+      case 'apellidos':
+        this.isValidApellidos = this.getValidRegex( REGEX_NAMES, valueInput ) && ( valueInput.trim().length );
+        break;
+      case 'correo':
+        this.isValidEmail = this.getValidRegex( REGEX_EMAIL, valueInput ) && ( valueInput.trim().length );
         break;
       default: break;
     }
 
-
-    this.setState({
-      [valueNameInput]: valueInput
-    });
+    this.setState( {
+      [ valueNameInput ]: valueInput
+    } );
   }
 
-  getValidRegex(regex, value) {
-    return REGEX_USERNAME.test(value);
+  getValidRegex( regex, value ) {
+    return regex.test( value );
   }
 
 
-  isRequired(value) {
+  isRequired( value ) {
     const _value = value.trim();
     return !!_value.length;
   }
 
   onDismiss() {
-    this.setState({ showError: false });
+    this.setState( { showError: false } );
   }
 
-  getMessageError(valueName, isValid, submitted) {
-    if(valueName.trim().length === 0 && submitted){
+  getMessageError( valueName, isValid, submitted ) {
+    if ( valueName.trim().length === 0 && submitted ) {
       return <p className='text-danger msg-error-input'>Campo Requerido</p>
     }
-    if(valueName.trim().length > 0 && !isValid){
+    if ( valueName.trim().length > 0 && !isValid ) {
       return <p className='text-danger msg-error-input'>Campo invalido</p>
     }
   }
@@ -192,7 +233,7 @@ class ModalPreguntas extends Component {
           </Alert>
           <div className='form-auth'>
             <div className='text-center'>
-              Imagen Logo
+              {/* Imagen Logo */}
            </div>
             <h3 className='text-uppercase'>
               Crear Cuenta
@@ -200,31 +241,37 @@ class ModalPreguntas extends Component {
             <form autoComplete='off'>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Nombres</label>
-                <input placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} required/>
+                <input type='text' placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} />
               </div>
+              {this.getMessageError( this.state.nombres, this.isValidNombres, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Apellidos</label>
-                <input placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} required/>
+                <input type='text' placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} />
               </div>
+              {this.getMessageError( this.state.apellidos, this.isValidApellidos, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Correo</label>
-                <input type='email' placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} required/>
+                <input type='email' placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} />
               </div>
+              {this.getMessageError( this.state.correo, this.isValidEmail, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Usuario</label>
-                <input placeholder='Ej. jhonwick' name='usuario' onChange={this.handleChangeInput} value={this.state.usuario} required/>
+                <input type='text' placeholder='Ej. jhonwick' name='username' onChange={this.handleChangeInput} value={this.state.username} />
               </div>
+              {this.getMessageError( this.state.username, this.isValidUsername, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Contraseña</label>
-                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.password} required/>
+                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.password} />
               </div>
-              <button type='submit' onClick={this.handleSubmitRegister} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.state.loader) ? 'go-btn-loading' : null}`}>
+              {this.getMessageError( this.state.password, this.isValidPassword, this.state.submitted )}
+              
+              <button type='submit' onClick={this.handleSubmitRegAUth} className={`go-btn go-btn-block go-btn-primary mb-3 ${ ( this.props.loader ) ? 'go-btn-loading' : null }`}>
                 Registrar
-                {(this.state.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
+                {( this.props.loader ) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
               </button>
               <div className='divider'></div>
               <div className='text-auth'>
-                ¿Ya tienes una cuenta?, Inicia sesion  <span className='pointer' onClick={() => { this.setState({ registrar: !this.state.registrar }) }}> aqui</span>
+                ¿Ya tienes una cuenta?, Inicia sesion  <span className='pointer' onClick={() => { this.setState( { registrar: !this.state.registrar } ) }}> aqui</span>
               </div>
             </form>
           </div>
@@ -290,24 +337,28 @@ class ModalPreguntas extends Component {
                 <label htmlFor="" className='d-block mb-2'>Usuario</label>
                 <input placeholder='Ej. jhonwick' name='username' onChange={this.handleChangeInput} value={this.state.username.value} />
               </div>
-              {this.getMessageError(this.state.username, this.isValidUsername, this.state.submitted)}
+              {this.getMessageError( this.state.username, this.isValidUsername, this.state.submitted )}
               <div className='go-input mb-2'>
                 <label htmlFor="" className='d-block mb-2'>Contraseña</label>
                 <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.password} />
               </div>
-              {this.getMessageError(this.state.password, this.isValidPassword, this.state.submitted)}
-              <button type='submit' onClick={this.handleSubmitAuth} className={`go-btn go-btn-block go-btn-primary mb-3 ${(this.props.loader) ? 'go-btn-loading' : null}`}>
+              {this.getMessageError( this.state.password, this.isValidPassword, this.state.submitted )}
+              <button type='submit' onClick={this.handleSubmitAuth} className={`go-btn go-btn-block go-btn-primary mb-3 ${ ( this.props.loader ) ? 'go-btn-loading' : null }`}>
                 Ingresar
-                {(this.props.loader) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
+                {( this.props.loader ) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
               </button>
               <div className='divider'></div>
               <div className='text-auth'>
-                ¿No tienes una cuenta?, registrate  <span className='pointer' onClick={() => { this.setState({ registrar: !this.state.registrar }) }}> aqui</span>
+                ¿No tienes una cuenta?, registrate  <span className='pointer' onClick={() => { this.setState( { registrar: !this.state.registrar } ) }}> aqui</span>
               </div>
             </form>
           </div>
         </div>
-        <div className='layout-window__right'></div>
+        <div className='layout-window__right'>
+          <div className='d-flex justify-content-center align-items-center h-100'>
+            <img src={ImageLogin} alt="" />
+          </div>
+        </div>
 
         {/* <ModalHeader toggle={this.props.toggle} charcode="X" className='text-align-center'>Iniciar Sesion</ModalHeader>
         <ModalBody>
@@ -331,20 +382,20 @@ class ModalPreguntas extends Component {
       </Modal>
     )
   }
-  handleInputContra(data) {
-    this.setState({
+  handleInputContra( data ) {
+    this.setState( {
       contraIn: data.target.value
-    })
+    } )
   }
 
   render() {
-    if (!this.props.modal) {
+    if ( !this.props.modal ) {
       return null;
-    } if (!this.state.registrar) {
-      return (this.handleRegistrar())
+    } if ( !this.state.registrar ) {
+      return ( this.handleRegistrar() )
     }
-    if (this.handleRegistrar) {
-      return (this.handleLogin())
+    if ( this.handleRegistrar ) {
+      return ( this.handleLogin() )
     }
   }
 }
