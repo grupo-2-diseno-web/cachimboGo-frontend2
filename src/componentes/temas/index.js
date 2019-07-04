@@ -139,48 +139,14 @@ class Temas extends Component {
 
         PostData('respuesta',bodyRequest)
         .then(response => {
-            const {correcta,informacion} = response;
-
-            if (this.state.rpta === preguntas[0].correcta_num) {
-
-              if (this.state.respuestas.find(pregunta => pregunta.id_pregunta === preguntas[0].id_pregunta)) {
-                  this.setState({
-                    respuesta:informacion,
-                    correcta: correcta,
-                    msj: 'Tu Respuesta es Correcta'
-                  })
-              } else {
-                respuesta = new this.crearObj(this.state.usuario.id_usuario, preguntas[0].id_pregunta, 1);//falta id 
-                this.setState({
-                    respuesta: informacion,
-                    respuestas: this.state.respuestas.concat(respuesta),
-                    correcta: response.correcta,
-                    msj:'Tu Respuesta es Correcta'
-                })
-            }
-        } else {
-            if (this.state.respuestas.find(pregunta => pregunta.id_pregunta === preguntas[0].id_pregunta)) {
-                this.setState({
-                    respuesta: informacion,
-                    correcta: correcta,
-                    errorPregunta: true,
-                    msj: "Tu respuesta es Incorrecta",
-                    errores: this.state.errores+1
-                })
-            } else {
-                respuesta = new this.crearObj(this.state.usuario.id_usuario, preguntas[0].id_pregunta, 0);
-                this.setState({
-                    respuesta: informacion,
-                    respuestas: this.state.respuestas.concat(respuesta),
-                    correcta: correcta,
-                    errorPregunta: true,
-                    msj: "Tu respuesta es Incorrecta",
-                    errores:this.state.errores+1
-                })
-            }
-
-        }
-          
+            const {correcta,informacion} = response;            
+            this.setState({
+                respuesta:informacion,
+                correcta: correcta,
+                errorPregunta: !correcta,
+                msj: correcta ? 'Tu respuesta es correcta' : 'Tu respuesta es incorrecta',
+                errores: correcta ? this.state.errores : this.state.errores++
+            });
         }).catch( e => {
           throw new Error(e);
       })
@@ -330,6 +296,7 @@ class Temas extends Component {
     render() {
         const temas = this.props.temas;
         //console.log(temas);
+        console.log("temas");
         if (this.state.open) {
             return (
                 <Row>
