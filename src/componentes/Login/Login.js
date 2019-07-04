@@ -13,6 +13,9 @@ import ImageLogin from './../../img/itest.png'
 import './auth.css';
 
 const REGEX_USERNAME = /^[a-zA-Z0-9_.-]*$/;
+const REGEX_EMAIL = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const REGEX_NAMES = /^(?![\s.]+$)[a-zA-Z\s.]*$/;
+
 
 class ModalPreguntas extends Component {
 
@@ -29,12 +32,19 @@ class ModalPreguntas extends Component {
       showError: false,
       username: '',
       password: '',
+      usuario:'',
       submitted: false,
       monedas: 0
     }
 
     this.isValidUsername = false;
     this.isValidPassword = false;
+
+    this.isValidNombres = false;
+    this.isValidApellidos = false;
+    this.isValidEmail = false;
+    this.isValidUsuario = false;
+    
 
     this.handleInputUser = this.handleInputUser.bind( this );
     this.handleInputContra = this.handleInputContra.bind( this );
@@ -48,17 +58,11 @@ class ModalPreguntas extends Component {
     this.handleRegistro = this.handleRegistro.bind( this );
 
     // myHandkles
-<<<<<<< HEAD
-    this.handleChangeInput = this.handleChangeInput.bind( this );
-    this.handleSubmitAuth = this.handleSubmitAuth.bind( this );
-    this.onDismiss = this.onDismiss.bind( this );
-
-=======
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleSubmitAuth = this.handleSubmitAuth.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
     this.handleSubmitRegister = this.handleSubmitRegister.bind(this);
->>>>>>> 48373c27ea0878500f68b188ca3a596cfd47464f
+    this.handleSubmitRegAUth = this.handleSubmitRegAUth.bind(this);
   }
   handleInputUser( data ) {
     this.setState( {
@@ -113,11 +117,26 @@ class ModalPreguntas extends Component {
 
     }
   }
-
-<<<<<<< HEAD
-  handleSubmitRegister( ev ) {
+  handleSubmitRegAUth(ev){
     ev.preventDefault();
-=======
+    this.setState( { submitted: true } );
+    if ( this.isValidNombres && this.isValidApellidos && this.isValidEmail && this.isValidUsername && this.isValidPassword ) {
+      const { nombres, apellidos,correo,username,password } = this.state;
+      const obj = {
+        usuario: username,
+        password: password,
+        nombres: nombres,
+        apellidos: apellidos,
+        correo: correo,
+        monedas: 0
+      }
+      this.props.registrar( obj, this.handleCambiarRegistro );
+      // this.props.login( username, password );
+    } else {
+
+    }
+  }
+
   handleSubmitRegister(ev) {
     ev.preventDefault();           
     const inputName = document.querySelector('input[name=nombres]'),
@@ -145,8 +164,9 @@ class ModalPreguntas extends Component {
         this.setState({registrar: !this.state.registrar});
       });
     }            
->>>>>>> 48373c27ea0878500f68b188ca3a596cfd47464f
   }
+
+  
 
   handleChangeInput( { target } ) {
     const valueInput = target.value
@@ -161,9 +181,17 @@ class ModalPreguntas extends Component {
       case 'password':
         this.isValidPassword = ( valueInput.trim().length );
         break;
+      case 'nombres':
+        this.isValidNombres = this.getValidRegex( REGEX_NAMES, valueInput ) && ( valueInput.trim().length );
+        break;
+      case 'apellidos':
+        this.isValidApellidos = this.getValidRegex( REGEX_NAMES, valueInput ) && ( valueInput.trim().length );
+        break;
+      case 'correo':
+        this.isValidEmail = this.getValidRegex( REGEX_EMAIL, valueInput ) && ( valueInput.trim().length );
+        break;
       default: break;
     }
-
 
     this.setState( {
       [ valueNameInput ]: valueInput
@@ -171,7 +199,7 @@ class ModalPreguntas extends Component {
   }
 
   getValidRegex( regex, value ) {
-    return REGEX_USERNAME.test( value );
+    return regex.test( value );
   }
 
 
@@ -205,7 +233,7 @@ class ModalPreguntas extends Component {
           </Alert>
           <div className='form-auth'>
             <div className='text-center'>
-              Imagen Logo
+              {/* Imagen Logo */}
            </div>
             <h3 className='text-uppercase'>
               Crear Cuenta
@@ -213,27 +241,33 @@ class ModalPreguntas extends Component {
             <form autoComplete='off'>
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Nombres</label>
-                <input placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} required/>
+                <input type='text' placeholder='Ej. jhonwick' name='nombres' onChange={this.handleChangeInput} value={this.state.nombres} />
               </div>
+              {this.getMessageError( this.state.nombres, this.isValidNombres, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Apellidos</label>
-                <input placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} required/>
+                <input type='text' placeholder='Ej. jhonwick' name='apellidos' onChange={this.handleChangeInput} value={this.state.apellidos} />
               </div>
+              {this.getMessageError( this.state.apellidos, this.isValidApellidos, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Correo</label>
-                <input type='email' placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} required/>
+                <input type='email' placeholder='Ej. jhonwick' name='correo' onChange={this.handleChangeInput} value={this.state.correo} />
               </div>
+              {this.getMessageError( this.state.correo, this.isValidEmail, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Usuario</label>
-                <input placeholder='Ej. jhonwick' name='usuario' onChange={this.handleChangeInput} value={this.state.usuario} required/>
+                <input type='text' placeholder='Ej. jhonwick' name='username' onChange={this.handleChangeInput} value={this.state.username} />
               </div>
+              {this.getMessageError( this.state.username, this.isValidUsername, this.state.submitted )}
               <div className='go-input mb-3'>
                 <label htmlFor="" className='d-block'>Contraseña</label>
-                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.password} required/>
+                <input type='password' name='password' placeholder='******' onChange={this.handleChangeInput} value={this.state.password} />
               </div>
-              <button type='submit' onClick={this.handleSubmitRegister} className={`go-btn go-btn-block go-btn-primary mb-3 ${ ( this.state.loader ) ? 'go-btn-loading' : null }`}>
+              {this.getMessageError( this.state.password, this.isValidPassword, this.state.submitted )}
+              
+              <button type='submit' onClick={this.handleSubmitRegAUth} className={`go-btn go-btn-block go-btn-primary mb-3 ${ ( this.props.loader ) ? 'go-btn-loading' : null }`}>
                 Registrar
-                {( this.state.loader ) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
+                {( this.props.loader ) ? <span className='go-spinner'><FontAwesomeIcon spin icon={faCircleNotch} size='lg' /></span> : null}
               </button>
               <div className='divider'></div>
               <div className='text-auth'>

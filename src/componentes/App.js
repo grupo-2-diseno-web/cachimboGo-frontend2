@@ -51,7 +51,7 @@ class App extends Component {
                 username: user,
                 password: contra
             }
-            this.setState({loader:true})
+            this.setState({loader:true});
             PostData("login", datos, true).then((result) => {
                 if (result.usuario) {
                     sessionStorage.setItem('user', JSON.stringify(result));
@@ -75,9 +75,11 @@ class App extends Component {
          * @param {*} estado 
          * Registrar a un nuevo usuario
          */
-    handleRegistrar(props, estado) {            
+    handleRegistrar(props, estado) {  
+      this.setState({loader:true})          
             PostData('usuario', props).then((result) => {
                 if (result) {
+                  this.setState({loader:false});
                     alert('Usuario registrado con exito');
                     estado();
                 }                
